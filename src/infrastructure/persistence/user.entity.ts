@@ -17,4 +17,10 @@ export class UserEntity {
 
   @Column({ type: 'simple-json' })
   roles!: Role[];
+
+  @Column({ type: 'varchar', nullable: true })
+  refreshTokenHash!: string | null;
+
+  @Column({ type: 'datetime', nullable: true })
+  refreshTokenExpiresAt!: Date | null;
 }

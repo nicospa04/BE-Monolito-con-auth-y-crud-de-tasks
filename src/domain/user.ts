@@ -6,4 +6,6 @@ export interface User {
   email: string;
   passwordHash: string;
   roles: Role[];
+  refreshTokenHash: string | null;
+  refreshTokenExpiresAt: Date | null;
 }

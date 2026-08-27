@@ -21,7 +21,10 @@ describe('UsersService', () => {
   const repository: UserRepository = {
     save: saveUser,
     findByUsername: findUser,
+    findById: jest.fn(),
     existsByUsername: userExists,
+    setRefreshToken: jest.fn(),
+    clearRefreshToken: jest.fn(),
   };
   const cache = {
     get: jest.fn<(key: string) => Promise<User | undefined>>(),
@@ -65,6 +68,8 @@ describe('UsersService', () => {
       email: 'nico@example.com',
       passwordHash: 'hash',
       roles: [Role.USER],
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null,
     });
 
     await expect(
@@ -83,6 +88,8 @@ describe('UsersService', () => {
       email: 'nico@example.com',
       passwordHash: 'hash',
       roles: [Role.USER],
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null,
     };
     cache.get.mockResolvedValue(user);
 

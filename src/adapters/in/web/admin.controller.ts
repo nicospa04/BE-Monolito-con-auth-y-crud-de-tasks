@@ -1,19 +1,19 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import {
-  ApiBasicAuth,
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Role } from '../../../domain/role';
-import { BasicAuthGuard } from '../../../infrastructure/security/basic-auth.guard';
+import { JwtAuthGuard } from '../../../infrastructure/security/jwt-auth.guard';
 import { Roles } from '../../../infrastructure/security/roles.decorator';
 import { RolesGuard } from '../../../infrastructure/security/roles.guard';
 
 @ApiTags('Administration')
-@ApiBasicAuth()
+@ApiBearerAuth()
 @Controller('api/admin')
-@UseGuards(BasicAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminController {
   @Get('health')
   @Roles(Role.ADMIN)

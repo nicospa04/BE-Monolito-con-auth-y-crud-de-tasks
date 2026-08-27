@@ -34,6 +34,8 @@ export class UsersService {
       email: command.email,
       passwordHash,
       roles: [Role.USER],
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null,
     });
     await this.cache.set(this.cacheKey(user.username), user);
     return user;
@@ -49,6 +51,28 @@ export class UsersService {
 
     await this.cache.set(key, user);
     return user;
+  }
+
+  async getById(id: number): Promise<User> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  async setRefreshToken(
+    userId: number,
+    refreshTokenHash: string,
+    refreshTokenExpiresAt: Date,
+  ): Promise<void> {
+    await this.userRepository.setRefreshToken(
+      userId,
+      refreshTokenHash,
+      refreshTokenExpiresAt,
+    );
+  }
+
+  async clearRefreshToken(userId: number): Promise<void> {
+    await this.userRepository.clearRefreshToken(userId);
   }
 
   private cacheKey(username: string): string {

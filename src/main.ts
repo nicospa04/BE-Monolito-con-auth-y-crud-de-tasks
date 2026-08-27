@@ -9,9 +9,9 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('NestJS Learning API')
-    .setDescription('Users, roles, HTTP Basic authentication and caching')
+    .setDescription('Users, roles, JWT authentication and caching')
     .setVersion('1.0')
-    .addBasicAuth()
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('swagger', app, document);

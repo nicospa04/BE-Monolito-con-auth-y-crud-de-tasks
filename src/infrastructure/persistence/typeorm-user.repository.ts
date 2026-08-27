@@ -20,7 +20,29 @@ export class TypeOrmUserRepository implements UserRepository {
     return this.repository.findOneBy({ username });
   }
 
+  async findById(id: number): Promise<User | null> {
+    return this.repository.findOneBy({ id });
+  }
+
   async existsByUsername(username: string): Promise<boolean> {
     return this.repository.existsBy({ username });
+  }
+
+  async setRefreshToken(
+    userId: number,
+    refreshTokenHash: string,
+    refreshTokenExpiresAt: Date,
+  ): Promise<void> {
+    await this.repository.update(userId, {
+      refreshTokenHash,
+      refreshTokenExpiresAt,
+    });
+  }
+
+  async clearRefreshToken(userId: number): Promise<void> {
+    await this.repository.update(userId, {
+      refreshTokenHash: null,
+      refreshTokenExpiresAt: null,
+    });
   }
 }

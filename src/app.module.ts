@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
+import { JwtModule } from '@nestjs/jwt';
 import KeyvRedis from '@keyv/redis';
 import { UserEntity } from './infrastructure/persistence/user.entity';
 import { AuthController } from './adapters/in/web/auth.controller';
@@ -9,7 +10,8 @@ import { AdminController } from './adapters/in/web/admin.controller';
 import { UserRepository } from './domain/user.repository';
 import { TypeOrmUserRepository } from './infrastructure/persistence/typeorm-user.repository';
 import { UsersService } from './application/users.service';
-import { BasicStrategy } from './infrastructure/security/basic.strategy';
+import { AuthService } from './application/auth.service';
+import { JwtStrategy } from './infrastructure/security/jwt.strategy';
 import { RolesGuard } from './infrastructure/security/roles.guard';
 
 @Module({
@@ -22,6 +24,10 @@ import { RolesGuard } from './infrastructure/security/roles.guard';
       synchronize: process.env.NODE_ENV !== 'production',
     }),
     TypeOrmModule.forFeature([UserEntity]),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET ?? 'development-only-change-me',
+    }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: () => ({
@@ -35,7 +41,8 @@ import { RolesGuard } from './infrastructure/security/roles.guard';
   controllers: [AuthController, AdminController],
   providers: [
     UsersService,
-    BasicStrategy,
+    AuthService,
+    JwtStrategy,
     RolesGuard,
     TypeOrmUserRepository,
     { provide: UserRepository, useExisting: TypeOrmUserRepository },
