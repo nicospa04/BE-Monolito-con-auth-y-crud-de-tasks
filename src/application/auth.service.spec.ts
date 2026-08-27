@@ -104,4 +104,14 @@ describe('AuthService', () => {
       UnauthorizedException,
     );
   });
+
+  it('revokes a valid refresh token on logout', async () => {
+    const refreshToken = '7.valid-token';
+    user.refreshTokenHash = await bcrypt.hash(refreshToken, 4);
+    user.refreshTokenExpiresAt = new Date(Date.now() + 60_000);
+
+    await service.logout(refreshToken);
+
+    expect(usersService.clearRefreshToken).toHaveBeenCalledWith(7);
+  });
 });

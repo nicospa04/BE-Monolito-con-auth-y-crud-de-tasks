@@ -6,7 +6,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 
 - User registration with BCrypt password hashing
 - `USER` and `ADMIN` roles
-- HTTP Basic authentication
+- JWT access tokens with refresh-token rotation and logout revocation
 - Role-protected admin endpoint
 - TypeORM with SQLite for local development
 - In-memory cache by default and Redis when `REDIS_URL` is configured
@@ -17,6 +17,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 
 ```bash
 npm install
+$env:JWT_SECRET="replace-with-a-long-random-secret"
 npm run start:dev
 ```
 
@@ -25,8 +26,18 @@ Swagger: <http://localhost:3000/swagger>
 ## Endpoints
 
 - `POST /api/auth/register` - public
-- `GET /api/auth/me` - HTTP Basic authentication
-- `GET /api/admin/health` - requires the `ADMIN` role
+- `POST /api/auth/login` - public; returns access and refresh tokens
+- `POST /api/auth/refresh` - rotates a valid refresh token
+- `POST /api/auth/logout` - revokes a valid refresh token
+- `GET /api/auth/me` - bearer JWT required
+- `GET /api/admin/health` - bearer JWT and `ADMIN` role required
+
+For `GET /api/auth/me` and the admin endpoint, pass the access token as
+`Authorization: Bearer <accessToken>`. The access token lasts 15 minutes. The
+refresh token lasts seven days, is stored hashed in the database, and is rotated
+on every refresh. This learning implementation stores one active refresh token
+per user, so logging in on a second device replaces the first session. Never
+commit `JWT_SECRET`; it is mandatory in production.
 
 Public registration always assigns `USER`; never accept an administrator role from an unauthenticated request.
 

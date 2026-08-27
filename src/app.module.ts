@@ -12,6 +12,7 @@ import { TypeOrmUserRepository } from './infrastructure/persistence/typeorm-user
 import { UsersService } from './application/users.service';
 import { AuthService } from './application/auth.service';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
+import { getJwtSecret } from './infrastructure/security/jwt.config';
 import { RolesGuard } from './infrastructure/security/roles.guard';
 
 @Module({
@@ -26,7 +27,7 @@ import { RolesGuard } from './infrastructure/security/roles.guard';
     TypeOrmModule.forFeature([UserEntity]),
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET ?? 'development-only-change-me',
+      secret: getJwtSecret(),
     }),
     CacheModule.registerAsync({
       isGlobal: true,
