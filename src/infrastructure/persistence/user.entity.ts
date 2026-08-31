@@ -21,6 +21,6 @@ export class UserEntity {
   @Column({ type: 'varchar', nullable: true })
   refreshTokenHash!: string | null;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: Date, nullable: true })
   refreshTokenExpiresAt!: Date | null;
 }
