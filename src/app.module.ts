@@ -19,16 +19,12 @@ import { AuthService } from './application/auth.service';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
 import { getJwtSecret } from './infrastructure/security/jwt.config';
 import { RolesGuard } from './infrastructure/security/roles.guard';
+import { createDatabaseOptions } from './infrastructure/persistence/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: process.env.DATABASE_PATH ?? 'learning.sqlite',
-      autoLoadEntities: true,
-      synchronize: process.env.NODE_ENV !== 'production',
-    }),
+    TypeOrmModule.forRoot(createDatabaseOptions()),
     TypeOrmModule.forFeature([UserEntity, TaskEntity]),
     JwtModule.register({
       global: true,

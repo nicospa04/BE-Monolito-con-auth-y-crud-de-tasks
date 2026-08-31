@@ -18,6 +18,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 
 ```bash
 npm install
+$env:DATABASE_URL="postgres://learning:learning@localhost:5432/nest_learning"
 $env:JWT_SECRET="replace-with-a-long-random-secret"
 npm run start:dev
 ```
@@ -64,6 +65,24 @@ npm run start:dev
 
 Cached user entries expire after ten minutes.
 
+## PostgreSQL and migrations
+
+Copy `.env.example` to `.env` and configure `DATABASE_URL` and `JWT_SECRET`.
+Development and production use PostgreSQL with `synchronize: false`; SQLite is
+used only by e2e tests through an in-memory database.
+
+```bash
+npm run migration:run
+npm run start:dev
+```
+
+To generate a migration after changing an entity, run PostgreSQL locally with
+the target schema applied, then use:
+
+```bash
+npm run migration:generate -- src/infrastructure/persistence/migrations/add-priority
+```
+
 ## Verification
 
 ```bash
@@ -72,4 +91,4 @@ npm test
 npm run test:e2e
 ```
 
-`synchronize` is enabled only outside production for learning convenience. Use migrations in a production project.
+Migrations are the source of truth for the PostgreSQL schema.
