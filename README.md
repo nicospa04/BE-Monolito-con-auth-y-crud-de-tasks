@@ -7,6 +7,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 - User registration with BCrypt password hashing
 - `USER` and `ADMIN` roles
 - JWT access tokens with refresh-token rotation and logout revocation
+- Private Tasks CRUD with ownership, pagination and status filtering
 - Role-protected admin endpoint
 - TypeORM with SQLite for local development
 - In-memory cache by default and Redis when `REDIS_URL` is configured
@@ -31,6 +32,9 @@ Swagger: <http://localhost:3000/swagger>
 - `POST /api/auth/logout` - revokes a valid refresh token
 - `GET /api/auth/me` - bearer JWT required
 - `GET /api/admin/health` - bearer JWT and `ADMIN` role required
+- `POST /api/tasks` - creates a task for the authenticated user
+- `GET /api/tasks?page=1&limit=20&status=TODO` - lists only that user's tasks
+- `GET/PATCH/DELETE /api/tasks/:id` - operates only on that user's task
 
 For `GET /api/auth/me` and the admin endpoint, pass the access token as
 `Authorization: Bearer <accessToken>`. The access token lasts 15 minutes. The
@@ -38,6 +42,13 @@ refresh token lasts seven days, is stored hashed in the database, and is rotated
 on every refresh. This learning implementation stores one active refresh token
 per user, so logging in on a second device replaces the first session. Never
 commit `JWT_SECRET`; it is mandatory in production.
+
+## Task cache
+
+Only an individual task lookup is cached, using a key scoped to its owner. Lists
+are intentionally read from the database because paginated/filterable list cache
+invalidation is more complex. Updating or deleting a task invalidates its cached
+lookup, so the next `GET /api/tasks/:id` reads the current database state.
 
 Public registration always assigns `USER`; never accept an administrator role from an unauthenticated request.
 
