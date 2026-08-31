@@ -43,9 +43,9 @@ export class TypeOrmTaskRepository implements TaskRepository {
     ownerId: number,
     changes: UpdateTaskData,
   ): Promise<Task | null> {
-    const task = await this.findByIdAndOwnerId(id, ownerId);
-    if (!task) return null;
-    return this.repository.save(Object.assign(task, changes));
+    const result = await this.repository.update({ id, ownerId }, changes);
+    if (result.affected !== 1) return null;
+    return this.findByIdAndOwnerId(id, ownerId);
   }
 
   async deleteByIdAndOwnerId(id: number, ownerId: number): Promise<boolean> {

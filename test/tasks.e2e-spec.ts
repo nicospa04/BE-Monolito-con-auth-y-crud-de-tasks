@@ -28,6 +28,8 @@ describe('TasksController (e2e)', () => {
 
   it('keeps tasks private to their owner and returns fresh data after an update', async () => {
     const suffix = Date.now();
+    await request(app.getHttpServer()).get('/api/tasks').expect(401);
+
     const ownerToken = await registerAndLogin(`owner-${suffix}`);
     const otherUserToken = await registerAndLogin(`other-${suffix}`);
 
@@ -56,6 +58,17 @@ describe('TasksController (e2e)', () => {
 
     await request(app.getHttpServer())
       .get(`/api/tasks/${taskId}`)
+      .set('Authorization', `Bearer ${otherUserToken}`)
+      .expect(404);
+
+    await request(app.getHttpServer())
+      .patch(`/api/tasks/${taskId}`)
+      .set('Authorization', `Bearer ${otherUserToken}`)
+      .send({ title: 'Hijacked task' })
+      .expect(404);
+
+    await request(app.getHttpServer())
+      .delete(`/api/tasks/${taskId}`)
       .set('Authorization', `Bearer ${otherUserToken}`)
       .expect(404);
 
