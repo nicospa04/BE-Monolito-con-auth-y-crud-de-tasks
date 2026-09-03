@@ -20,6 +20,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 npm install
 $env:DATABASE_URL="postgres://learning:learning@localhost:5433/nest_learning"
 $env:JWT_SECRET="replace-with-a-long-random-secret"
+npm run migration:run
 npm run start:dev
 ```
 

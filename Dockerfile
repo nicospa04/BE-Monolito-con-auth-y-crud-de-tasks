@@ -16,8 +16,10 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/dist ./dist
+RUN addgroup -S nest && adduser -S nest -G nest
+COPY --from=builder --chown=nest:nest /app/dist ./dist
 
 EXPOSE 3000
+USER nest
 
 CMD ["node", "dist/main"]
