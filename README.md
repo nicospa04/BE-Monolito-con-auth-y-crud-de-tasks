@@ -9,7 +9,7 @@ Equivalent NestJS version of the Spring Boot learning project.
 - JWT access tokens with refresh-token rotation and logout revocation
 - Private Tasks CRUD with ownership, pagination and status filtering
 - Role-protected admin endpoint
-- TypeORM with SQLite for local development
+- PostgreSQL with versioned TypeORM migrations
 - In-memory cache by default and Redis when `REDIS_URL` is configured
 - Swagger/OpenAPI
 - Unit and end-to-end tests
@@ -18,12 +18,36 @@ Equivalent NestJS version of the Spring Boot learning project.
 
 ```bash
 npm install
-$env:DATABASE_URL="postgres://learning:learning@localhost:5432/nest_learning"
+$env:DATABASE_URL="postgres://learning:learning@localhost:5433/nest_learning"
 $env:JWT_SECRET="replace-with-a-long-random-secret"
 npm run start:dev
 ```
 
 Swagger: <http://localhost:3000/swagger>
+
+## Docker Compose
+
+Copy `.env.example` to `.env` and replace `JWT_SECRET` with a long random
+secret. If you previously started the manual `nest-learning-postgres`
+container, stop and remove that container first because Compose uses host port
+`5433` for its PostgreSQL service:
+
+```powershell
+docker stop nest-learning-postgres
+docker rm nest-learning-postgres
+docker compose up --build
+```
+
+Compose starts PostgreSQL, Redis and the API. The API waits for both backing
+services to become healthy, runs pending migrations, then starts on port 3000.
+The API reaches PostgreSQL as `postgres:5432` and Redis as `redis:6379` inside
+the Docker network; `localhost` would refer to the API container itself.
+
+To stop the stack without deleting data:
+
+```powershell
+docker compose down
+```
 
 ## Endpoints
 
