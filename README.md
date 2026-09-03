@@ -117,3 +117,10 @@ npm run test:e2e
 ```
 
 Migrations are the source of truth for the PostgreSQL schema.
+
+## Continuous integration
+
+GitHub Actions runs on every push and pull request using Node.js 20. It installs
+the locked dependencies with `npm ci`, then runs lint without auto-fixing,
+unit tests, e2e tests and the production build. The e2e tests use in-memory
+SQLite, so this CI workflow does not need Docker services.
